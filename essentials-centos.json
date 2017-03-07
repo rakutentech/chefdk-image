@@ -3,22 +3,38 @@
     "aws_access_key": "",
     "aws_secret_key": "",
     "aws_keypair_name": "training-ec2-keypair",
-    "aws_keypair_file": "{{env `TRAINING_AWS_KEYPAIR`}}"
+    "aws_keypair_file": "{{env `TRAINING_AWS_KEYPAIR`}}",
+    "os_source_image_name": "{{env `OS_SOURCE_IMAGE_NAME`}}",
+    "os_flavor": "{{env `OS_FLAVOR`}}",
+    "os_network_id": "{{env `OS_NETWORK_ID`}}",
+    "os_security_group": "{{env `OS_SECURITY_GROUP`}}",
+    "os_ssh_username": "{{env `OS_SSH_USERNAME`}}",
+    "os_image_name": "{{env `OS_IMAGE_NAME`}}"
   },
-  "builders": [{
-    "type": "amazon-ebs",
-    "ssh_pty": true,
-    "access_key": "{{user `aws_access_key`}}",
-    "secret_key": "{{user `aws_secret_key`}}",
-    "ssh_keypair_name": "{{user `aws_keypair_name`}}",
-    "ssh_private_key_file": "{{user `aws_keypair_file`}}",
-    "region": "us-east-1",
-    "instance_type": "m3.medium",
-    "source_ami": "ami-c10044a4",
-    "ssh_username": "root",
-    "ami_name": "Essentials - CentOS 6.7 - 5.1.0"
-  }],
-
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "ssh_pty": true,
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "ssh_keypair_name": "{{user `aws_keypair_name`}}",
+      "ssh_private_key_file": "{{user `aws_keypair_file`}}",
+      "region": "us-east-1",
+      "instance_type": "m3.medium",
+      "source_ami": "ami-c10044a4",
+      "ssh_username": "root",
+      "ami_name": "Essentials - CentOS 6.7 - 5.1.0"
+    },
+    {
+      "type": "openstack",
+      "source_image_name": "{{user `os_source_image_name`}}",
+      "flavor": "{{user `os_flavor`}}",
+      "networks": ["{{user `os_network_id`}}"],
+      "security_groups": ["{{user `os_security_group`}}"],
+      "ssh_username": "{{user `os_ssh_username`}}",
+      "image_name": "{{user `os_image_name`}}"
+    }
+  ],
   "provisioners": [{
     "type": "chef-solo",
     "install_command": "curl -L https://www.chef.io/chef/install.sh | {{if .Sudo}}sudo{{end}} bash -s",
